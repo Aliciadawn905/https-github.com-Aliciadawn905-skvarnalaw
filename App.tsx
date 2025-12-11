@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import { USERS, INITIAL_TASK_LOGS } from './constants';
+import React, { useState, useEffect } from 'react';
 import { UserData, TaskLog } from './types';
 import { Dashboard } from './components/Dashboard';
 import { ComparisonMatrix } from './components/ComparisonMatrix';
@@ -7,55 +6,80 @@ import { IndividualBreakdown } from './components/IndividualBreakdown';
 import { Leaderboard } from './components/Leaderboard';
 import { DataEntry } from './components/DataEntry';
 import { LayoutDashboard, Users, Trophy, Table2, Menu, Bell, ClipboardPlus } from 'lucide-react';
+import { fetchUsers, fetchTaskLogs, addTaskLog, updateUserGoal as dbUpdateUserGoal, toggleBlueprint as dbToggleBlueprint } from './database';
 
 type View = 'dashboard' | 'comparison' | 'individual' | 'leaderboard' | 'entry';
 
 const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<View>('dashboard');
-  const [users, setUsers] = useState<UserData[]>(USERS);
-  const [taskLogs, setTaskLogs] = useState<TaskLog[]>(INITIAL_TASK_LOGS);
+  const [users, setUsers] = useState<UserData[]>([]);
+  const [taskLogs, setTaskLogs] = useState<TaskLog[]>([]);
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [weeklyGoal, setWeeklyGoal] = useState<number>(10);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Helper to update state (simulating backend update)
-  const updateUserGoal = (userId: string, type: 'tasksTarget' | 'hoursTarget' | 'deadline', value: any) => {
-    setUsers(prevUsers => prevUsers.map(u => {
-      if (u.id === userId) {
-        return {
-          ...u,
-          currentGoals: {
-            ...u.currentGoals,
-            [type]: value
-          }
-        };
-      }
-      return u;
-    }));
+  // Load data from database on mount
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const loadData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const [usersData, logsData] = await Promise.all([
+        fetchUsers(),
+        fetchTaskLogs(),
+      ]);
+      setUsers(usersData);
+      setTaskLogs(logsData);
+    } catch (err) {
+      console.error('Error loading data:', err);
+      setError('Failed to load data. Please refresh the page.');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const toggleBlueprint = (userId: string) => {
-    setUsers(prevUsers => prevUsers.map(u => {
-      if (u.id === userId) {
-        return {
-          ...u,
-          completedToneBlueprint: !u.completedToneBlueprint
-        };
-      }
-      return u;
-    }));
+  // Helper to update state (now calls database)
+  const updateUserGoal = async (userId: string, type: 'tasksTarget' | 'hoursTarget' | 'deadline', value: any) => {
+    try {
+      await dbUpdateUserGoal(userId, type, value);
+      // Refresh users data
+      const usersData = await fetchUsers();
+      setUsers(usersData);
+    } catch (err) {
+      console.error('Error updating user goal:', err);
+      alert('Failed to update goal. Please try again.');
+    }
   };
 
-  const handleAddLog = (newLog: TaskLog) => {
-    setTaskLogs(prev => [newLog, ...prev]);
+  const toggleBlueprint = async (userId: string) => {
+    try {
+      await dbToggleBlueprint(userId);
+      // Refresh users data
+      const usersData = await fetchUsers();
+      setUsers(usersData);
+    } catch (err) {
+      console.error('Error toggling blueprint:', err);
+      alert('Failed to update blueprint status. Please try again.');
+    }
+  };
 
-    // Side effect: Automatically mark Writing Tone Blueprint as completed if logged
-    if (newLog.taskType === 'Writing Tone Blueprint') {
-        setUsers(prevUsers => prevUsers.map(u => {
-            if (u.id === newLog.userId) {
-                return { ...u, completedToneBlueprint: true };
-            }
-            return u;
-        }));
+  const handleAddLog = async (newLog: TaskLog) => {
+    try {
+      await addTaskLog(newLog);
+      // Refresh both users and logs
+      const [usersData, logsData] = await Promise.all([
+        fetchUsers(),
+        fetchTaskLogs(),
+      ]);
+      setUsers(usersData);
+      setTaskLogs(logsData);
+    } catch (err) {
+      console.error('Error adding log:', err);
+      alert('Failed to add log. Please try again.');
     }
   };
 
@@ -66,6 +90,37 @@ const App: React.FC = () => {
     { id: 'leaderboard', label: 'Leaderboard', icon: Trophy },
     { id: 'comparison', label: 'Comparison Matrix', icon: Table2 },
   ];
+
+  // Show loading screen
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-skvarna-light/50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-skvarna-blue mx-auto mb-4"></div>
+          <p className="text-skvarna-navy text-lg font-semibold">Loading tracker data...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error screen
+  if (error) {
+    return (
+      <div className="min-h-screen bg-skvarna-light/50 flex items-center justify-center">
+        <div className="text-center bg-white p-8 rounded-lg shadow-lg max-w-md">
+          <div className="text-red-500 text-5xl mb-4">⚠️</div>
+          <h2 className="text-2xl font-bold text-skvarna-navy mb-2">Error Loading Data</h2>
+          <p className="text-skvarna-gray mb-4">{error}</p>
+          <button
+            onClick={loadData}
+            className="bg-skvarna-blue text-white px-6 py-2 rounded-lg hover:bg-skvarna-navy transition"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-skvarna-light/50 flex flex-col md:flex-row">
@@ -115,13 +170,15 @@ const App: React.FC = () => {
 
           {/* User Profile Snippet (Current User - Vic) */}
           <div className="p-4 border-t border-skvarna-blue bg-skvarna-blue/20">
-            <div className="flex items-center space-x-3">
-              <img src={users[0].avatar} alt="Vic" className="w-10 h-10 rounded-full border-2 border-skvarna-yellow" />
-              <div>
-                <p className="text-sm font-bold text-white">Vic Skvarna</p>
-                <p className="text-xs text-skvarna-steel">Owner</p>
+            {users.length > 0 && (
+              <div className="flex items-center space-x-3">
+                <img src={users[0].avatar} alt="Vic" className="w-10 h-10 rounded-full border-2 border-skvarna-yellow" />
+                <div>
+                  <p className="text-sm font-bold text-white">{users[0].name}</p>
+                  <p className="text-xs text-skvarna-steel">{users[0].role}</p>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </aside>
