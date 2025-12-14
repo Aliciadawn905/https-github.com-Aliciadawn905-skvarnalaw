@@ -6,7 +6,7 @@ import { IndividualBreakdown } from './components/IndividualBreakdown';
 import { Leaderboard } from './components/Leaderboard';
 import { DataEntry } from './components/DataEntry';
 import { LayoutDashboard, Users, Trophy, Table2, Menu, Bell, ClipboardPlus } from 'lucide-react';
-import { fetchUsers, fetchTaskLogs, addTaskLog, updateUserGoal as dbUpdateUserGoal, toggleBlueprint as dbToggleBlueprint } from './database';
+import { fetchUsers, fetchTaskLogs, addTaskLog, updateUserGoal as dbUpdateUserGoal, toggleBlueprint as dbToggleBlueprint } from './Database';
 
 type View = 'dashboard' | 'comparison' | 'individual' | 'leaderboard' | 'entry';
 
