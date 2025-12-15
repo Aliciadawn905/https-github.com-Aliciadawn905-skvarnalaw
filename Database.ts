@@ -10,6 +10,21 @@ if (!supabaseUrl || !supabaseAnonKey) {
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
+// Helper function to calculate next Friday in MM/DD/YYYY format
+function getNextFriday(): string {
+  const today = new Date();
+  const dayOfWeek = today.getDay(); // 0 = Sunday, 5 = Friday
+  const daysUntilFriday = dayOfWeek <= 5 ? 5 - dayOfWeek : 7 - dayOfWeek + 5;
+  const nextFriday = new Date(today);
+  nextFriday.setDate(today.getDate() + (daysUntilFriday || 7)); // If today is Friday, get next Friday
+  
+  const month = String(nextFriday.getMonth() + 1).padStart(2, '0');
+  const day = String(nextFriday.getDate()).padStart(2, '0');
+  const year = nextFriday.getFullYear();
+  
+  return `${month}/${day}/${year}`;
+}
+
 // Helper function to transform database response to UserData format
 function transformUserData(dbUser: any): UserData {
   return {
@@ -21,7 +36,7 @@ function transformUserData(dbUser: any): UserData {
     currentGoals: {
       tasksTarget: dbUser.tasks_target || dbUser.currentGoals?.tasksTarget || 10,
       hoursTarget: dbUser.hours_target || dbUser.currentGoals?.hoursTarget || 0,
-      deadline: dbUser.deadline || dbUser.currentGoals?.deadline || '',
+      deadline: getNextFriday(), // Always shows the next Friday
     },
     metrics: {
       totalTasks: dbUser.total_tasks || dbUser.metrics?.totalTasks || 0,
