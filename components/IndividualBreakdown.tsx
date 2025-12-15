@@ -52,7 +52,26 @@ export const IndividualBreakdown: React.FC<IndividualBreakdownProps> = ({ users,
                 </div>
                 
                 <h3 className="text-lg font-bold text-skvarna-navy mb-1">{user.name}</h3>
-                <p className="text-xs text-skvarna-gray mb-4">{user.role}</p>
+                <p className="text-xs text-skvarna-gray mb-3">{user.role}</p>
+
+                {/* Writing Tone Blueprint Status - Prominent Position */}
+                <div className={`w-full mb-4 p-2.5 rounded-lg border-2 ${
+                  user.completedWritingToneBlueprint || user.completedToneBlueprint 
+                    ? 'bg-green-50 border-green-400' 
+                    : 'bg-amber-50 border-amber-300'
+                }`}>
+                  <div className="flex items-center justify-center text-sm font-semibold">
+                    {user.completedWritingToneBlueprint || user.completedToneBlueprint ? (
+                      <span className="text-green-700 flex items-center">
+                        <CheckSquare size={16} className="mr-1.5" /> Blueprint Complete
+                      </span>
+                    ) : (
+                      <span className="text-amber-700 flex items-center">
+                        <BookOpen size={16} className="mr-1.5" /> Blueprint Pending
+                      </span>
+                    )}
+                  </div>
+                </div>
 
                 <div className="w-full space-y-2 mb-4">
                   <div className="flex justify-between text-sm">
@@ -187,6 +206,7 @@ export const IndividualBreakdown: React.FC<IndividualBreakdownProps> = ({ users,
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Target Tasks */}
                     <div>
                         <label className="block text-xs font-bold text-skvarna-gray uppercase mb-2">Target Tasks</label>
                         <input 
@@ -204,21 +224,63 @@ export const IndividualBreakdown: React.FC<IndividualBreakdownProps> = ({ users,
                         <p className="text-xs text-gray-400 mt-1">Progress: {Math.round((selectedUser.metrics.totalTasks / selectedUser.currentGoals.tasksTarget) * 100)}%</p>
                     </div>
 
+                    {/* Minutes Saved Display with Radial Visualization */}
                     <div>
-                        <label className="block text-xs font-bold text-skvarna-gray uppercase mb-2">Target Minutes Saved</label>
-                        <input 
-                            type="number" 
-                            value={(selectedUser.currentGoals.hoursTarget || 0) * 60}
-                            onChange={(e) => handleGoalChange('hoursTarget', (parseInt(e.target.value) / 60).toString())}
-                            className="w-full border border-gray-300 rounded p-2 text-skvarna-navy focus:border-skvarna-blue outline-none"
-                        />
-                        <div className="w-full bg-gray-200 rounded-full h-1.5 mt-2">
-                            <div 
-                                className="bg-skvarna-yellow h-1.5 rounded-full" 
-                                style={{ width: `${Math.min(((selectedUser.metrics.totalHoursSaved || 0) / (selectedUser.currentGoals.hoursTarget || 1)) * 100, 100)}%` }}
-                            ></div>
+                        <label className="block text-xs font-bold text-skvarna-gray uppercase mb-2">Minutes Saved</label>
+                        <div className="flex items-center justify-center mt-2">
+                            {(() => {
+                              const minutes = Math.round((selectedUser.metrics.totalHoursSaved || 0) * 60);
+                              const radius = 50;
+                              const circumference = 2 * Math.PI * radius;
+                              const progress = Math.min(minutes / 100, 1); // Max out at 100 minutes for visual
+                              const strokeDashoffset = circumference * (1 - progress);
+                              
+                              // Color transitions: red -> yellow -> green based on minutes
+                              let color = '#EF4444'; // red
+                              if (minutes >= 60) color = '#10B981'; // green
+                              else if (minutes >= 30) color = '#F59E0B'; // yellow/orange
+                              
+                              return (
+                                <div className="relative">
+                                  <svg width="120" height="120" className="transform -rotate-90">
+                                    <circle
+                                      cx="60"
+                                      cy="60"
+                                      r={radius}
+                                      stroke="#E5E7EB"
+                                      strokeWidth="10"
+                                      fill="none"
+                                    />
+                                    <circle
+                                      cx="60"
+                                      cy="60"
+                                      r={radius}
+                                      stroke={color}
+                                      strokeWidth="10"
+                                      fill="none"
+                                      strokeDasharray={circumference}
+                                      strokeDashoffset={strokeDashoffset}
+                                      strokeLinecap="round"
+                                      className="transition-all duration-500"
+                                    />
+                                  </svg>
+                                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                                    <span className="text-3xl font-bold" style={{ color }}>{minutes}</span>
+                                    <span className="text-xs text-gray-500">minutes</span>
+                                  </div>
+                                </div>
+                              );
+                            })()}
                         </div>
-                         <p className="text-xs text-gray-400 mt-1">Progress: {Math.round(((selectedUser.metrics.totalHoursSaved || 0) / (selectedUser.currentGoals.hoursTarget || 1)) * 100)}%</p>
+                        <p className="text-xs text-center text-gray-400 mt-2">
+                          {(() => {
+                            const minutes = Math.round((selectedUser.metrics.totalHoursSaved || 0) * 60);
+                            if (minutes >= 60) return "🎉 Amazing progress!";
+                            if (minutes >= 30) return "💪 Keep it up!";
+                            if (minutes > 0) return "🚀 Great start!";
+                            return "Start tracking to see progress!";
+                          })()}
+                        </p>
                     </div>
                 </div>
             </div>
