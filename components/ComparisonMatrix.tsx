@@ -50,7 +50,7 @@ export const ComparisonMatrix: React.FC<ComparisonMatrixProps> = ({ users }) => 
       sandra: getUserMetric('Sandra', 'efficiency'),
     },
     {
-      metric: 'Engagement Score (1-10)',
+      metric: 'Weekly Engagement Score (1-10)',
       vic: getUserMetric('Vic', 'engagement'),
       kelly: getUserMetric('Kelly', 'engagement'),
       maria: getUserMetric('Maria', 'engagement'),
@@ -127,7 +127,17 @@ export const ComparisonMatrix: React.FC<ComparisonMatrixProps> = ({ users }) => 
       <div className="bg-skvarna-yellow/10 border border-skvarna-yellow rounded-lg p-4 mt-4">
         <h4 className="font-bold text-skvarna-navy mb-2">Insight</h4>
         <p className="text-sm text-skvarna-gray">
-          Sandra is currently leading in both efficiency and total hours saved. Maria has shown a 30% increase in task completion since Week 1, indicating strong adoption progress.
+          {users.length > 0 ? (
+            (() => {
+              const sortedByEfficiency = [...users].sort((a, b) => b.metrics.avgEfficiency - a.metrics.avgEfficiency);
+              const sortedByHours = [...users].sort((a, b) => (b.metrics.totalHoursSaved || 0) - (a.metrics.totalHoursSaved || 0));
+              const topEfficiency = sortedByEfficiency[0];
+              const topHours = sortedByHours[0];
+              const totalActivities = users.reduce((sum, u) => sum + u.metrics.totalTasks, 0);
+              
+              return `${topEfficiency.name} is leading with ${topEfficiency.metrics.avgEfficiency}% efficiency. ${topHours.name} has saved the most time with ${topHours.metrics.totalHoursSaved?.toFixed(1)} hours. The team has logged ${totalActivities} AI activities this week.`;
+            })()
+          ) : 'Start logging AI activities to see team insights.'}
         </p>
       </div>
     </div>

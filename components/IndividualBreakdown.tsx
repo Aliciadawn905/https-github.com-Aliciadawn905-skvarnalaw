@@ -64,8 +64,8 @@ export const IndividualBreakdown: React.FC<IndividualBreakdownProps> = ({ users,
                     <span className="font-bold text-green-600">{user.metrics.avgEfficiency}%</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-skvarna-gray">Hours Saved</span>
-                    <span className="font-bold text-skvarna-yellow">{user.metrics.totalHoursSaved || 0} hrs</span>
+                    <span className="text-skvarna-gray">Minutes Saved</span>
+                    <span className="font-bold text-skvarna-yellow">{Math.round((user.metrics.totalHoursSaved || 0) * 60)} min</span>
                   </div>
                 </div>
 
@@ -120,17 +120,19 @@ export const IndividualBreakdown: React.FC<IndividualBreakdownProps> = ({ users,
             <h3 className="text-xl font-bold text-skvarna-navy">{selectedUser.name}</h3>
             <p className="text-sm text-skvarna-gray mb-6">{selectedUser.role}</p>
 
-            <div className="w-full space-y-4">
+                <div className="w-full space-y-4">
                 <div className="flex justify-between text-sm">
                     <span className="text-skvarna-gray">Total Tasks</span>
                     <span className="font-bold text-skvarna-blue">{selectedUser.metrics.totalTasks}</span>
                 </div>
                 <div className="flex justify-between text-sm">
+                    <span className="text-skvarna-gray">Minutes Saved</span>
+                    <span className="font-bold text-skvarna-yellow">{Math.round((selectedUser.metrics.totalHoursSaved || 0) * 60)} min</span>
+                </div>
+                <div className="flex justify-between text-sm">
                     <span className="text-skvarna-gray">Efficiency</span>
                     <span className="font-bold text-green-600">{selectedUser.metrics.avgEfficiency}%</span>
-                </div>
-                
-                {/* Blueprint Tracker */}
+                </div>                {/* Blueprint Tracker */}
                 <div className="bg-skvarna-light/30 rounded-lg p-3 border border-skvarna-light cursor-pointer hover:bg-skvarna-light/50 transition-colors"
                      onClick={() => toggleBlueprint(selectedUser.id)}
                 >
@@ -177,16 +179,16 @@ export const IndividualBreakdown: React.FC<IndividualBreakdownProps> = ({ users,
                 </ResponsiveContainer>
             </div>
 
-            {/* Goal Management Section */}
+            {/* Statistics Section */}
             <div className="bg-white p-6 rounded-xl shadow-sm border border-skvarna-light">
                 <div className="flex items-center space-x-2 mb-4">
                     <Target className="text-skvarna-blue" />
-                    <h4 className="text-lg font-bold text-skvarna-navy">Goal Management</h4>
+                    <h4 className="text-lg font-bold text-skvarna-navy">Statistics</h4>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label className="block text-xs font-bold text-skvarna-gray uppercase mb-1">Target Tasks</label>
+                        <label className="block text-xs font-bold text-skvarna-gray uppercase mb-2">Target Tasks</label>
                         <input 
                             type="number" 
                             value={selectedUser.currentGoals.tasksTarget}
@@ -203,11 +205,11 @@ export const IndividualBreakdown: React.FC<IndividualBreakdownProps> = ({ users,
                     </div>
 
                     <div>
-                        <label className="block text-xs font-bold text-skvarna-gray uppercase mb-1">Target Hours Saved</label>
+                        <label className="block text-xs font-bold text-skvarna-gray uppercase mb-2">Target Minutes Saved</label>
                         <input 
                             type="number" 
-                            value={selectedUser.currentGoals.hoursTarget || 0}
-                            onChange={(e) => handleGoalChange('hoursTarget', e.target.value)}
+                            value={(selectedUser.currentGoals.hoursTarget || 0) * 60}
+                            onChange={(e) => handleGoalChange('hoursTarget', (parseInt(e.target.value) / 60).toString())}
                             className="w-full border border-gray-300 rounded p-2 text-skvarna-navy focus:border-skvarna-blue outline-none"
                         />
                         <div className="w-full bg-gray-200 rounded-full h-1.5 mt-2">
@@ -217,21 +219,6 @@ export const IndividualBreakdown: React.FC<IndividualBreakdownProps> = ({ users,
                             ></div>
                         </div>
                          <p className="text-xs text-gray-400 mt-1">Progress: {Math.round(((selectedUser.metrics.totalHoursSaved || 0) / (selectedUser.currentGoals.hoursTarget || 1)) * 100)}%</p>
-                    </div>
-
-                    <div>
-                        <label className="block text-xs font-bold text-skvarna-gray uppercase mb-1">Completion Deadline</label>
-                        <div className="flex items-center space-x-2">
-                            <input 
-                                type="date" 
-                                value={selectedUser.currentGoals.deadline || ''}
-                                onChange={(e) => handleDeadlineChange(e.target.value)}
-                                className="w-full border border-gray-300 rounded p-2 text-skvarna-navy focus:border-skvarna-blue outline-none"
-                            />
-                        </div>
-                        <button className="text-xs text-skvarna-blue mt-2 underline hover:text-skvarna-navy">
-                            Extend Timeframe
-                        </button>
                     </div>
                 </div>
             </div>

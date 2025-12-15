@@ -15,6 +15,11 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ users }) => {
       <div className="text-center md:text-left">
           <h2 className="text-2xl font-bold text-skvarna-blue">Efficiency Board</h2>
           <p className="text-skvarna-gray">Celebrating top performers in AI adoption</p>
+          <div className="mt-3 bg-blue-50 border-l-4 border-skvarna-blue p-3 rounded">
+            <p className="text-sm text-skvarna-navy">
+              <span className="font-semibold">Efficiency Score:</span> Average minutes saved per AI task. A score of 75% means you're saving 45 minutes per activity on average!
+            </p>
+          </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 mt-8">

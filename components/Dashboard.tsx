@@ -28,10 +28,10 @@ export const Dashboard: React.FC<DashboardProps> = ({ users, weeklyGoal, onUpdat
   const avgEfficiency = users.length > 0 ? Math.round(users.reduce((acc, user) => acc + user.metrics.avgEfficiency, 0) / users.length) : 0;
   const blueprintCompletionCount = users.filter(u => u.completedWritingToneBlueprint || u.completedToneBlueprint).length;
   
-  // Create chart data with hours saved per person
+  // Create chart data with minutes saved per person
   const teamProgressData = users.map(user => ({
     name: user.name,
-    hours: user.metrics.totalHoursSaved || 0,
+    minutes: Math.round((user.metrics.totalHoursSaved || 0) * 60),
   }));
 
   // Pie chart data and colors - matching color scheme across both charts
@@ -148,9 +148,9 @@ export const Dashboard: React.FC<DashboardProps> = ({ users, weeklyGoal, onUpdat
       {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
-        {/* Hours Saved by Staff */}
+        {/* Minutes Saved by Staff */}
         <div className="bg-white p-6 rounded-xl shadow-sm border border-skvarna-light">
-          <h3 className="text-lg font-bold text-skvarna-navy mb-4">Hours Saved by Team Member</h3>
+          <h3 className="text-lg font-bold text-skvarna-navy mb-4">Minutes Saved by Team Member</h3>
           <div className="h-80 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={teamProgressData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
@@ -159,9 +159,9 @@ export const Dashboard: React.FC<DashboardProps> = ({ users, weeklyGoal, onUpdat
                 <YAxis axisLine={false} tickLine={false} tick={{fill: '#5E6163'}} />
                 <Tooltip 
                     contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}
-                    formatter={(value) => [`${value} hrs`, 'Hours Saved']}
+                    formatter={(value) => [`${value} min`, 'Minutes Saved']}
                 />
-                <Bar dataKey="hours" radius={[4, 4, 0, 0]}>
+                <Bar dataKey="minutes" radius={[4, 4, 0, 0]}>
                   {teamProgressData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={getColorForUser(entry.name)} />
                   ))}

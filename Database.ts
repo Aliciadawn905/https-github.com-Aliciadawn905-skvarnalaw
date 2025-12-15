@@ -98,11 +98,13 @@ export async function fetchUsers(): Promise<UserData[]> {
       log.task_description?.toLowerCase().includes('writing tone blueprint')
     ) || dbUser.completed_writing_tone_blueprint || false;
     
-    // Calculate engagement score (0-10 based on activity)
-    const engagementScore = Math.min(10, Math.floor(totalTasks / 2));
+    // Calculate engagement score (0-10 based on number of activities)
+    const engagementScore = Math.min(10, totalTasks);
     
-    // Calculate average efficiency (placeholder - can be refined)
-    const avgEfficiency = totalTasks > 0 ? Math.min(100, Math.round((totalHoursSaved / totalTasks) * 20)) : 0;
+    // Calculate average efficiency as percentage (average minutes saved per task / 60 * 100)
+    // This gives us a percentage where 60 minutes saved per task = 100% efficiency
+    const avgMinutesPerTask = totalTasks > 0 ? (totalHoursSaved * 60) / totalTasks : 0;
+    const avgEfficiency = Math.min(100, Math.round(avgMinutesPerTask * (100 / 60)));
     
     return {
       ...transformUserData(dbUser),
