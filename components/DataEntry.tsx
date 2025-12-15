@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { UserData, TaskLog, TaskType } from '../types';
 import { AI_TOOLS, TASK_TYPES } from '../constants';
-import { PlusCircle, History, User as UserIcon, Briefcase, PenTool, FileText, Filter, Clock } from 'lucide-react';
+import { PlusCircle, History, User as UserIcon, Briefcase, PenTool, FileText, Filter, Clock, CheckCircle } from 'lucide-react';
 
 interface DataEntryProps {
   users: UserData[];
@@ -17,6 +17,8 @@ export const DataEntry: React.FC<DataEntryProps> = ({ users, logs, onAddLog }) =
   const [description, setDescription] = useState<string>('');
   const [timeSaved, setTimeSaved] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
 
   // Filter State
   const [filterUser, setFilterUser] = useState<string>('All');
@@ -50,14 +52,19 @@ export const DataEntry: React.FC<DataEntryProps> = ({ users, logs, onAddLog }) =
 
       await onAddLog(newLog);
       
+      // Show custom success message
+      const minutes = parseInt(timeSaved) || 0;
+      setSuccessMessage(`${user?.name} just logged ${minutes} minutes saved using ${toolName}! 🚀`);
+      setShowSuccess(true);
+      
+      // Auto-hide success message after 4 seconds
+      setTimeout(() => setShowSuccess(false), 4000);
+      
       // Only reset form if submission was successful
       setDescription('');
       setTimeSaved('');
       setSelectedUserId('');
       setToolName('');
-      
-      // Show success message
-      alert('Log added successfully!');
     } catch (err: any) {
       console.error('Form submission error:', err);
       // Show the actual error message from the database
@@ -89,6 +96,19 @@ export const DataEntry: React.FC<DataEntryProps> = ({ users, logs, onAddLog }) =
 
   return (
     <div className="space-y-6 animate-fade-in">
+      {/* Success Toast Notification */}
+      {showSuccess && (
+        <div className="fixed top-4 right-4 z-50 animate-fade-in">
+          <div className="bg-gradient-to-r from-skvarna-blue to-skvarna-navy text-white px-6 py-4 rounded-lg shadow-2xl border-2 border-skvarna-yellow flex items-center space-x-3 max-w-md">
+            <CheckCircle size={32} className="text-skvarna-yellow flex-shrink-0" />
+            <div>
+              <p className="font-bold text-lg">Success!</p>
+              <p className="text-sm">{successMessage}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-2xl font-bold text-skvarna-blue">Data Entry Log</h2>
