@@ -86,6 +86,7 @@ export async function fetchTaskLogs(): Promise<TaskLog[]> {
 }
 
 export async function addTaskLog(taskLog: {
+  id: string;
   user_id: string;
   user_name: string;
   tool_name: string;

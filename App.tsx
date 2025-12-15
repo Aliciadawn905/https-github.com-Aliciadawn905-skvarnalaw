@@ -76,6 +76,7 @@ const App: React.FC = () => {
     try {
       // Convert to database format (snake_case)
       const dbLog = {
+        id: newLog.id, // Include the id for Supabase
         user_id: newLog.userId,
         user_name: newLog.userName,
         tool_name: newLog.toolName,
