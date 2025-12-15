@@ -35,11 +35,11 @@ export const Dashboard: React.FC<DashboardProps> = ({ users, weeklyGoal, onUpdat
   }));
 
   // Pie chart data and colors - matching color scheme across both charts
-  const COLORS = ['#215F8B', '#F7C355', '#64748B', '#0EA5E9']; // Kelly, Maria, Sandra, Vic
+  const COLORS = ['#F7C355', '#215F8B', '#64748B', '#0EA5E9']; // Kelly, Maria, Sandra, Vic
   const getColorForUser = (name: string) => {
     const colorMap: { [key: string]: string } = {
-      'Kelly': '#215F8B',
-      'Maria': '#F7C355',
+      'Kelly': '#F7C355',
+      'Maria': '#215F8B',
       'Sandra': '#64748B',
       'Vic': '#0EA5E9'
     };
