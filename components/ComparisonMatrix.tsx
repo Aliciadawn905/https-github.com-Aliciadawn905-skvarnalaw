@@ -8,10 +8,60 @@ interface ComparisonMatrixProps {
 }
 
 export const ComparisonMatrix: React.FC<ComparisonMatrixProps> = ({ users }) => {
+  // Get user data by name
+  const getUserMetric = (name: string, metric: 'tasks' | 'hours' | 'efficiency' | 'engagement') => {
+    const user = users.find(u => u.name === name);
+    if (!user) return 0;
+    
+    switch(metric) {
+      case 'tasks':
+        return user.metrics.tasksCompleted;
+      case 'hours':
+        return user.metrics.totalHoursSaved.toFixed(1);
+      case 'efficiency':
+        return user.metrics.efficiency ? `${user.metrics.efficiency}%` : '0%';
+      case 'engagement':
+        return user.metrics.engagementScore || 0;
+      default:
+        return 0;
+    }
+  };
+
+  const comparisonData = [
+    {
+      metric: 'AI Activities Logged (Total)',
+      vic: getUserMetric('Vic', 'tasks'),
+      kelly: getUserMetric('Kelly', 'tasks'),
+      maria: getUserMetric('Maria', 'tasks'),
+      sandra: getUserMetric('Sandra', 'tasks'),
+    },
+    {
+      metric: 'Weekly Goal Progress',
+      vic: `${getUserMetric('Vic', 'tasks')}/10`,
+      kelly: `${getUserMetric('Kelly', 'tasks')}/10`,
+      maria: `${getUserMetric('Maria', 'tasks')}/10`,
+      sandra: `${getUserMetric('Sandra', 'tasks')}/10`,
+    },
+    {
+      metric: 'Efficiency (%)',
+      vic: getUserMetric('Vic', 'efficiency'),
+      kelly: getUserMetric('Kelly', 'efficiency'),
+      maria: getUserMetric('Maria', 'efficiency'),
+      sandra: getUserMetric('Sandra', 'efficiency'),
+    },
+    {
+      metric: 'Engagement Score (1-10)',
+      vic: getUserMetric('Vic', 'engagement'),
+      kelly: getUserMetric('Kelly', 'engagement'),
+      maria: getUserMetric('Maria', 'engagement'),
+      sandra: getUserMetric('Sandra', 'engagement'),
+    },
+  ];
+
   const handleExport = () => {
     // Generate CSV content
     const headers = ['Metric', 'Vic', 'Kelly', 'Maria', 'Sandra'];
-    const rows = INITIAL_COMPARISON_DATA.map(row => 
+    const rows = comparisonData.map(row => 
       [row.metric, row.vic, row.kelly, row.maria, row.sandra].join(',')
     );
     const csvContent = "data:text/csv;charset=utf-8," + [headers.join(','), ...rows].join('\n');
@@ -32,7 +82,7 @@ export const ComparisonMatrix: React.FC<ComparisonMatrixProps> = ({ users }) => 
     <div className="space-y-6 animate-fade-in">
       <div className="flex justify-between items-center">
         <div>
-            <h2 className="text-2xl font-bold text-skvarna-blue">Performance Matrix</h2>
+            <h2 className="text-2xl font-bold text-skvarna-blue">Efficiency Board</h2>
             <p className="text-skvarna-gray">Side-by-side comparison of team metrics</p>
         </div>
         <button 
@@ -57,7 +107,7 @@ export const ComparisonMatrix: React.FC<ComparisonMatrixProps> = ({ users }) => 
               </tr>
             </thead>
             <tbody className="divide-y divide-skvarna-light">
-              {INITIAL_COMPARISON_DATA.map((row, index) => (
+              {comparisonData.map((row, index) => (
                 <tr key={index} className="hover:bg-gray-50 transition-colors">
                   <td className="p-4 font-medium text-skvarna-gray flex items-center space-x-2">
                     <Table size={16} className="text-skvarna-blue opacity-50" />
