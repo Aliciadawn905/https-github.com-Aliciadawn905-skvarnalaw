@@ -350,10 +350,10 @@ export const DataEntry: React.FC<DataEntryProps> = ({ users, logs, onAddLog, onD
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {[
             { tool: "ChatGPT", task: "Draft initial client intake questionnaire for estate planning", time: "20 min" },
-            { tool: "Claude.ai", task: "Summarize 50-page medical records for Medicaid planning case", time: "45 min" },
+            { tool: "Claude.ai", task: "Create summary template for organizing medical documentation review", time: "25 min" },
             { tool: "Gemini", task: "Research recent changes to power of attorney laws in your state", time: "30 min" },
             { tool: "ChatGPT Plus", task: "Create template response letter for probate court filing", time: "15 min" },
-            { tool: "Claude.ai", task: "Analyze trust document and highlight potential issues", time: "25 min" },
+            { tool: "Claude.ai", task: "Generate checklist of common issues to review in trust documents", time: "20 min" },
             { tool: "NotebookLM", task: "Generate FAQ sheet for clients about guardianship process", time: "20 min" },
             { tool: "ChatGPT", task: "Write follow-up email to client explaining next steps in will creation", time: "10 min" },
             { tool: "Gemini", task: "Compare different trust structures for high-net-worth client", time: "35 min" },
