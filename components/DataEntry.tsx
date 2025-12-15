@@ -13,7 +13,7 @@ export const DataEntry: React.FC<DataEntryProps> = ({ users, logs, onAddLog }) =
   // Form State
   const [selectedUserId, setSelectedUserId] = useState<string>('');
   const [toolName, setToolName] = useState<string>('');
-  const [taskType, setTaskType] = useState<TaskType>('Research');
+  const [taskType, setTaskType] = useState<TaskType>('Client Email/Letter');
   const [description, setDescription] = useState<string>('');
   const [timeSaved, setTimeSaved] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);

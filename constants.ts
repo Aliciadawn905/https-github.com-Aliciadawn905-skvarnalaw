@@ -12,11 +12,11 @@ export const AI_TOOLS = [
 
 // Task type categories for AI usage
 export const TASK_TYPES = [
-  'Research',
-  'Drafting', 
-  'Review',
-  'Communication',
-  'Analysis',
+  'Client Email/Letter',
+  'Legal Research',
+  'Document Drafting',
+  'Document Review',
+  'Case Analysis',
   'Writing Tone Blueprint',
   'Other'
 ] as const;

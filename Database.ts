@@ -66,13 +66,58 @@ function transformTaskLogData(dbLog: any): TaskLog {
 }
 
 export async function fetchUsers(): Promise<UserData[]> {
-  const { data, error } = await supabase
+  // Fetch users
+  const { data: usersData, error: usersError } = await supabase
     .from('users')
     .select('*')
     .order('name');
   
-  if (error) throw error;
-  return (data || []).map(transformUserData);
+  if (usersError) throw usersError;
+  
+  // Fetch all task logs to calculate metrics
+  const { data: logsData, error: logsError } = await supabase
+    .from('task_logs')
+    .select('*');
+  
+  if (logsError) throw logsError;
+  
+  // Calculate metrics for each user from their task logs
+  const users = (usersData || []).map(dbUser => {
+    const userLogs = (logsData || []).filter(log => log.user_id === dbUser.id);
+    
+    // Calculate total tasks and hours saved
+    const totalTasks = userLogs.length;
+    const totalHoursSaved = userLogs.reduce((sum, log) => sum + (log.time_saved || 0), 0) / 60; // Convert minutes to hours
+    
+    // Get unique tools used
+    const aiToolsUsed = [...new Set(userLogs.map(log => log.tool_name))];
+    
+    // Check if Writing Tone Blueprint is completed
+    const completedBlueprint = userLogs.some(log => 
+      log.task_type === 'Writing Tone Blueprint' || 
+      log.task_description?.toLowerCase().includes('writing tone blueprint')
+    ) || dbUser.completed_writing_tone_blueprint || false;
+    
+    // Calculate engagement score (0-10 based on activity)
+    const engagementScore = Math.min(10, Math.floor(totalTasks / 2));
+    
+    // Calculate average efficiency (placeholder - can be refined)
+    const avgEfficiency = totalTasks > 0 ? Math.min(100, Math.round((totalHoursSaved / totalTasks) * 20)) : 0;
+    
+    return {
+      ...transformUserData(dbUser),
+      metrics: {
+        totalTasks,
+        totalHoursSaved: Math.round(totalHoursSaved * 10) / 10, // Round to 1 decimal
+        avgEfficiency,
+        aiToolsUsed,
+        engagementScore,
+      },
+      completedWritingToneBlueprint: completedBlueprint,
+    };
+  });
+  
+  return users;
 }
 
 export async function fetchTaskLogs(): Promise<TaskLog[]> {
