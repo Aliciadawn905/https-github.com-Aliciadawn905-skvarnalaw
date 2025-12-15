@@ -11,8 +11,8 @@ interface DataEntryProps {
 
 export const DataEntry: React.FC<DataEntryProps> = ({ users, logs, onAddLog }) => {
   // Form State
-  const [selectedUserId, setSelectedUserId] = useState<string>(users[0].id);
-  const [toolName, setToolName] = useState<string>('Gemini');
+  const [selectedUserId, setSelectedUserId] = useState<string>('');
+  const [toolName, setToolName] = useState<string>('');
   const [taskType, setTaskType] = useState<TaskType>('Research');
   const [description, setDescription] = useState<string>('');
   const [timeSaved, setTimeSaved] = useState<string>('');
@@ -27,7 +27,10 @@ export const DataEntry: React.FC<DataEntryProps> = ({ users, logs, onAddLog }) =
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!description.trim()) return;
+    if (!description.trim() || !selectedUserId || !toolName) {
+      alert('Please fill in all required fields (User, Tool, and Description)');
+      return;
+    }
 
     setIsSubmitting(true);
 
@@ -101,7 +104,9 @@ export const DataEntry: React.FC<DataEntryProps> = ({ users, logs, onAddLog }) =
                         value={selectedUserId}
                         onChange={(e) => setSelectedUserId(e.target.value)}
                         className="w-full pl-3 pr-10 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-skvarna-blue/20 focus:border-skvarna-blue bg-white"
+                        required
                     >
+                        <option value="">Select a user</option>
                         {users.map(u => <option key={u.id} value={u.id}>{u.name}</option>)}
                     </select>
                 </div>
@@ -116,7 +121,9 @@ export const DataEntry: React.FC<DataEntryProps> = ({ users, logs, onAddLog }) =
                     value={toolName}
                     onChange={(e) => setToolName(e.target.value)}
                     className="w-full pl-3 pr-10 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-skvarna-blue/20 focus:border-skvarna-blue bg-white"
+                    required
                 >
+                    <option value="">Select a tool</option>
                     {toolOptions.map(t => <option key={t} value={t}>{t}</option>)}
                 </select>
               </div>

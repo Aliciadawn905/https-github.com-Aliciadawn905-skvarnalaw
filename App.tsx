@@ -188,10 +188,10 @@ const App: React.FC = () => {
           <div className="p-4 border-t border-skvarna-blue bg-skvarna-blue/20">
             {users.length > 0 && (
               <div className="flex items-center space-x-3">
-                <img src={users[0].avatar} alt="Vic" className="w-10 h-10 rounded-full border-2 border-skvarna-yellow" />
+                <img src={users.find(u => u.role === 'Owner')?.avatar || users[0].avatar} alt="Current User" className="w-10 h-10 rounded-full border-2 border-skvarna-yellow" />
                 <div>
-                  <p className="text-sm font-bold text-white">{users[0].name}</p>
-                  <p className="text-xs text-skvarna-steel">{users[0].role}</p>
+                  <p className="text-sm font-bold text-white">{users.find(u => u.role === 'Owner')?.name || users[0].name}</p>
+                  <p className="text-xs text-skvarna-steel">{users.find(u => u.role === 'Owner')?.role || users[0].role}</p>
                 </div>
               </div>
             )}
