@@ -7,7 +7,7 @@ import { Leaderboard } from './components/Leaderboard';
 import { DataEntry } from './components/DataEntry';
 import { TaskIdeas } from './components/TaskIdeas';
 import { LayoutDashboard, Users, Trophy, Table2, Menu, Bell, ClipboardPlus, Lightbulb } from 'lucide-react';
-import { fetchUsers, fetchTaskLogs, addTaskLog, updateUserGoal as dbUpdateUserGoal, toggleBlueprint as dbToggleBlueprint } from './Database';
+import { fetchUsers, fetchTaskLogs, addTaskLog, deleteTaskLog, updateUserGoal as dbUpdateUserGoal, toggleBlueprint as dbToggleBlueprint } from './Database';
 
 type View = 'dashboard' | 'comparison' | 'individual' | 'leaderboard' | 'entry' | 'ideas';
 
@@ -99,6 +99,22 @@ const App: React.FC = () => {
     } catch (err) {
       console.error('Error adding log:', err);
       throw err; // Re-throw so DataEntry can handle it
+    }
+  };
+
+  const handleDeleteLog = async (logId: string) => {
+    try {
+      await deleteTaskLog(logId);
+      // Refresh both users and logs
+      const [usersData, logsData] = await Promise.all([
+        fetchUsers(),
+        fetchTaskLogs(),
+      ]);
+      setUsers(usersData);
+      setTaskLogs(logsData);
+    } catch (err) {
+      console.error('Error deleting log:', err);
+      alert('Failed to delete log. Please try again.');
     }
   };
 
@@ -225,7 +241,7 @@ const App: React.FC = () => {
             {currentView === 'comparison' && <ComparisonMatrix users={users} />}
             {currentView === 'individual' && <IndividualBreakdown users={users} updateUserGoal={updateUserGoal} toggleBlueprint={toggleBlueprint} />}
             {currentView === 'leaderboard' && <Leaderboard users={users} />}
-            {currentView === 'entry' && <DataEntry users={users} logs={taskLogs} onAddLog={handleAddLog} />}
+            {currentView === 'entry' && <DataEntry users={users} logs={taskLogs} onAddLog={handleAddLog} onDeleteLog={handleDeleteLog} />}
             {currentView === 'ideas' && <TaskIdeas users={users} />}
           </div>
         </div>

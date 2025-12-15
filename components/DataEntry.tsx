@@ -274,6 +274,7 @@ export const DataEntry: React.FC<DataEntryProps> = ({ users, logs, onAddLog, onD
                             <th className="p-4 font-semibold">User</th>
                             <th className="p-4 font-semibold">Tool & Type</th>
                             <th className="p-4 font-semibold">Task</th>
+                            <th className="p-4 font-semibold text-right">Actions</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100">
@@ -295,7 +296,7 @@ export const DataEntry: React.FC<DataEntryProps> = ({ users, logs, onAddLog, onD
                                             <span className="text-xs px-2 py-0.5 rounded-full bg-skvarna-light text-skvarna-gray border border-gray-200">
                                                 {log.taskType}
                                             </span>
-                                            {log.timeSaved > 0 && (
+                                            {log.timeSaved && log.timeSaved > 0 && (
                                                 <span className="text-xs text-green-600 font-medium flex items-center">
                                                     <Clock size={10} className="mr-1" />
                                                     {log.timeSaved}m
@@ -305,11 +306,28 @@ export const DataEntry: React.FC<DataEntryProps> = ({ users, logs, onAddLog, onD
                                     </div>
                                 </td>
                                 <td className="p-4 text-sm text-gray-600 max-w-xs">{log.taskDescription}</td>
+                                <td className="p-4">
+                                    <div className="flex items-center justify-end space-x-2">
+                                        {onDeleteLog && (
+                                            <button
+                                                onClick={() => {
+                                                    if (confirm('Delete this log entry?')) {
+                                                        onDeleteLog(log.id);
+                                                    }
+                                                }}
+                                                className="text-red-400 hover:text-red-600 transition-colors p-1"
+                                                title="Delete log"
+                                            >
+                                                <Trash2 size={16} />
+                                            </button>
+                                        )}
+                                    </div>
+                                </td>
                             </tr>
                         ))}
                         {filteredLogs.length === 0 && (
                             <tr>
-                                <td colSpan={4} className="p-8 text-center text-gray-400 italic">
+                                <td colSpan={5} className="p-8 text-center text-gray-400 italic">
                                     {logs.length > 0 ? "No entries match your filters." : "No activity logged yet."}
                                 </td>
                             </tr>

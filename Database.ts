@@ -157,6 +157,20 @@ export async function addTaskLog(taskLog: {
   return data?.[0];
 }
 
+export async function deleteTaskLog(logId: string) {
+  const { error } = await supabase
+    .from('task_logs')
+    .delete()
+    .eq('id', logId);
+  
+  if (error) {
+    console.error('Supabase delete error:', error);
+    throw new Error(`Failed to delete log: ${error.message}`);
+  }
+  
+  console.log('Task log deleted successfully');
+}
+
 export async function updateUserGoal(userId: string, type: 'tasksTarget' | 'hoursTarget' | 'deadline', value: any) {
   const fieldMap: { [key: string]: string } = {
     tasksTarget: 'tasks_target',
