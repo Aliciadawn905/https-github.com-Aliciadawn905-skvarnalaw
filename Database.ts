@@ -95,12 +95,19 @@ export async function addTaskLog(taskLog: {
   timestamp: number;
   time_saved?: number;
 }) {
+  console.log('Attempting to insert task log:', taskLog);
+  
   const { data, error } = await supabase
     .from('task_logs')
     .insert([taskLog])
     .select();
   
-  if (error) throw error;
+  if (error) {
+    console.error('Supabase insert error:', error);
+    throw new Error(`Failed to add log: ${error.message}`);
+  }
+  
+  console.log('Task log inserted successfully:', data);
   return data?.[0];
 }
 
