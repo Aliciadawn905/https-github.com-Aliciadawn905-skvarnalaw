@@ -53,7 +53,7 @@ export const TaskIdeas: React.FC<TaskIdeasProps> = ({ users }) => {
   return (
     <div className="space-y-6 animate-fade-in">
       <div>
-        <h2 className="text-2xl font-bold text-skvarna-blue">Task Ideas to Automate</h2>
+        <h2 className="text-2xl font-bold text-skvarna-blue">Automation Ideas</h2>
         <p className="text-skvarna-gray">Collect ideas for tasks that could be automated with AI tools</p>
       </div>
 
@@ -86,7 +86,7 @@ export const TaskIdeas: React.FC<TaskIdeasProps> = ({ users }) => {
               {/* Task Idea */}
               <div>
                 <label className="block text-xs font-bold text-skvarna-gray uppercase mb-1 flex items-center gap-1">
-                  <Lightbulb size={12} /> Task Idea
+                  <Lightbulb size={12} /> Automation Idea
                 </label>
                 <textarea
                   value={newIdea}
@@ -118,7 +118,7 @@ export const TaskIdeas: React.FC<TaskIdeasProps> = ({ users }) => {
               <div className="flex items-center justify-between">
                 <h3 className="font-bold text-skvarna-navy flex items-center space-x-2">
                   <Lightbulb size={18} className="text-skvarna-yellow" />
-                  <span>All Task Ideas</span>
+                  <span>All Automation Ideas</span>
                 </h3>
                 <span className="text-xs text-skvarna-gray bg-white px-2 py-1 rounded border border-gray-200">
                   {ideas.length} {ideas.length === 1 ? 'Idea' : 'Ideas'}
@@ -130,7 +130,7 @@ export const TaskIdeas: React.FC<TaskIdeasProps> = ({ users }) => {
               {ideas.length === 0 ? (
                 <div className="text-center py-12">
                   <Lightbulb size={48} className="mx-auto text-gray-300 mb-3" />
-                  <p className="text-skvarna-gray">No task ideas yet. Add your first idea!</p>
+                  <p className="text-skvarna-gray">No automation ideas yet. Add your first idea!</p>
                 </div>
               ) : (
                 <div className="space-y-3">

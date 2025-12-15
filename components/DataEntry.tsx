@@ -58,9 +58,11 @@ export const DataEntry: React.FC<DataEntryProps> = ({ users, logs, onAddLog }) =
       
       // Show success message
       alert('Log added successfully!');
-    } catch (err) {
+    } catch (err: any) {
       console.error('Form submission error:', err);
-      alert('Failed to add log. Please try again.');
+      // Show the actual error message from the database
+      const errorMessage = err?.message || 'Failed to add log. Please try again.';
+      alert(`Error: ${errorMessage}`);
     } finally {
       setIsSubmitting(false);
     }
