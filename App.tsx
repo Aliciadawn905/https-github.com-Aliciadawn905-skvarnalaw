@@ -123,8 +123,8 @@ const App: React.FC = () => {
     { id: 'entry', label: 'AI Tracking Log', icon: ClipboardPlus },
     { id: 'ideas', label: 'Automation Ideas', icon: Lightbulb },
     { id: 'individual', label: 'Individual Progress', icon: Users },
-    { id: 'leaderboard', label: 'Leaderboard', icon: Trophy },
-    { id: 'comparison', label: 'Efficiency Board', icon: Table2 },
+    { id: 'leaderboard', label: 'Efficiency Board', icon: Trophy },
+    { id: 'comparison', label: 'Team Metrics', icon: Table2 },
   ];
 
   // Show loading screen

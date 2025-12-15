@@ -15,11 +15,11 @@ export const ComparisonMatrix: React.FC<ComparisonMatrixProps> = ({ users }) => 
     
     switch(metric) {
       case 'tasks':
-        return user.metrics.tasksCompleted;
+        return user.metrics.totalTasks || 0;
       case 'hours':
-        return user.metrics.totalHoursSaved.toFixed(1);
+        return user.metrics.totalHoursSaved?.toFixed(1) || '0.0';
       case 'efficiency':
-        return user.metrics.efficiency ? `${user.metrics.efficiency}%` : '0%';
+        return user.metrics.avgEfficiency ? `${user.metrics.avgEfficiency}%` : '0%';
       case 'engagement':
         return user.metrics.engagementScore || 0;
       default:
@@ -82,7 +82,7 @@ export const ComparisonMatrix: React.FC<ComparisonMatrixProps> = ({ users }) => 
     <div className="space-y-6 animate-fade-in">
       <div className="flex justify-between items-center">
         <div>
-            <h2 className="text-2xl font-bold text-skvarna-blue">Efficiency Board</h2>
+            <h2 className="text-2xl font-bold text-skvarna-blue">Team Metrics</h2>
             <p className="text-skvarna-gray">Side-by-side comparison of team metrics</p>
         </div>
         <button 

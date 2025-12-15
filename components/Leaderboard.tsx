@@ -13,7 +13,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ users }) => {
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="text-center md:text-left">
-          <h2 className="text-2xl font-bold text-skvarna-blue">Efficiency Leaderboard</h2>
+          <h2 className="text-2xl font-bold text-skvarna-blue">Efficiency Board</h2>
           <p className="text-skvarna-gray">Celebrating top performers in AI adoption</p>
       </div>
 
