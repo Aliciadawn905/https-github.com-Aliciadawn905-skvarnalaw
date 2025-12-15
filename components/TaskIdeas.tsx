@@ -37,12 +37,7 @@ const EXAMPLE_IDEAS: Omit<TaskIdea, 'id'>[] = [
 ];
 
 export const TaskIdeas: React.FC<TaskIdeasProps> = ({ users }) => {
-  const [ideas, setIdeas] = useState<TaskIdea[]>(
-    EXAMPLE_IDEAS.map((example, index) => ({
-      ...example,
-      id: `example-${index}`
-    }))
-  );
+  const [ideas, setIdeas] = useState<TaskIdea[]>([]);
   const [selectedUserId, setSelectedUserId] = useState<string>('');
   const [newIdea, setNewIdea] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -268,6 +263,28 @@ export const TaskIdeas: React.FC<TaskIdeasProps> = ({ users }) => {
                 </table>
               )}
             </div>
+          </div>
+
+          {/* Example Ideas Section */}
+          <div className="mt-6 bg-amber-50 border border-amber-200 rounded-xl p-6">
+            <h4 className="text-md font-bold text-amber-900 mb-3 flex items-center gap-2">
+              <Lightbulb size={18} className="text-amber-600" />
+              Example Automation Ideas
+            </h4>
+            <p className="text-sm text-amber-800 mb-4">Here are some ideas to get you started thinking about AI automation opportunities:</p>
+            <ul className="space-y-3">
+              {EXAMPLE_IDEAS.map((example, index) => (
+                <li key={index} className="bg-white border border-amber-100 rounded-lg p-3">
+                  <div className="flex items-start gap-2">
+                    <span className="text-amber-600 font-bold text-sm">•</span>
+                    <div>
+                      <p className="text-sm text-gray-700 font-medium">{example.idea}</p>
+                      <p className="text-xs text-gray-500 mt-1">Suggested by: {example.userName}</p>
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       </div>

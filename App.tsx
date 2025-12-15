@@ -199,7 +199,12 @@ const App: React.FC = () => {
                 `}
               >
                 <item.icon size={20} />
-                <span>{item.label}</span>
+                <span className="flex-1 text-left">{item.label}</span>
+                {item.id === 'ideas' && (
+                  <span className="bg-skvarna-yellow/20 text-skvarna-navy text-xs px-2 py-0.5 rounded-full font-semibold">
+                    0
+                  </span>
+                )}
               </button>
             ))}
           </nav>

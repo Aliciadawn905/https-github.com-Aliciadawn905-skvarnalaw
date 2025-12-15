@@ -79,11 +79,15 @@ export const IndividualBreakdown: React.FC<IndividualBreakdownProps> = ({ users,
                     <span className="font-bold text-skvarna-blue">{user.metrics.totalTasks}</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-skvarna-gray">Efficiency</span>
-                    <span className="font-bold text-green-600">{user.metrics.avgEfficiency}%</span>
+                    <span className="text-skvarna-gray">Avg per Task</span>
+                    <span className="font-bold text-green-600">
+                      {user.metrics.totalTasks > 0 
+                        ? Math.round((user.metrics.totalHoursSaved || 0) * 60 / user.metrics.totalTasks)
+                        : 0} min
+                    </span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-skvarna-gray">Minutes Saved</span>
+                    <span className="text-skvarna-gray">Total Saved</span>
                     <span className="font-bold text-skvarna-yellow">{Math.round((user.metrics.totalHoursSaved || 0) * 60)} min</span>
                   </div>
                 </div>
@@ -139,19 +143,25 @@ export const IndividualBreakdown: React.FC<IndividualBreakdownProps> = ({ users,
             <h3 className="text-xl font-bold text-skvarna-navy">{selectedUser.name}</h3>
             <p className="text-sm text-skvarna-gray mb-6">{selectedUser.role}</p>
 
-                <div className="w-full space-y-4">
+            <div className="w-full space-y-4">
                 <div className="flex justify-between text-sm">
                     <span className="text-skvarna-gray">Total Tasks</span>
                     <span className="font-bold text-skvarna-blue">{selectedUser.metrics.totalTasks}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                    <span className="text-skvarna-gray">Minutes Saved</span>
+                    <span className="text-skvarna-gray">Total Saved</span>
                     <span className="font-bold text-skvarna-yellow">{Math.round((selectedUser.metrics.totalHoursSaved || 0) * 60)} min</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                    <span className="text-skvarna-gray">Efficiency</span>
-                    <span className="font-bold text-green-600">{selectedUser.metrics.avgEfficiency}%</span>
-                </div>                {/* Blueprint Tracker */}
+                    <span className="text-skvarna-gray">Avg per Task</span>
+                    <span className="font-bold text-green-600">
+                      {selectedUser.metrics.totalTasks > 0 
+                        ? Math.round((selectedUser.metrics.totalHoursSaved || 0) * 60 / selectedUser.metrics.totalTasks)
+                        : 0} min
+                    </span>
+                </div>
+                
+                {/* Blueprint Tracker */}
                 <div className="bg-skvarna-light/30 rounded-lg p-3 border border-skvarna-light cursor-pointer hover:bg-skvarna-light/50 transition-colors"
                      onClick={() => toggleBlueprint(selectedUser.id)}
                 >
@@ -183,19 +193,76 @@ export const IndividualBreakdown: React.FC<IndividualBreakdownProps> = ({ users,
             </div>
         </div>
 
-        {/* Performance Chart */}
+        {/* Performance Stats Grid */}
         <div className="col-span-1 lg:col-span-2 space-y-6">
-            <div className="bg-white p-6 rounded-xl shadow-sm border border-skvarna-light h-64">
-                <h4 className="text-lg font-bold text-skvarna-navy mb-2">Weekly Efficiency Trend</h4>
-                <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={selectedUser.stats}>
-                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#EBEFF2" />
-                        <XAxis dataKey="week" axisLine={false} tickLine={false} />
-                        <YAxis hide domain={[0, 100]} />
-                        <Tooltip />
-                        <Line type="monotone" dataKey="efficiencyScore" stroke="#F7C355" strokeWidth={3} dot={{r: 4, fill:'#215F8B'}} />
-                    </LineChart>
-                </ResponsiveContainer>
+            {/* Quick Stats Cards */}
+            <div className="grid grid-cols-2 gap-4">
+                {/* Tasks Logged Visual */}
+                <div className="bg-white p-6 rounded-xl shadow-sm border border-skvarna-light">
+                    <h4 className="text-sm font-bold text-skvarna-gray uppercase mb-4">Tasks This Week</h4>
+                    <div className="flex items-center justify-center">
+                        {(() => {
+                          const tasks = selectedUser.metrics.totalTasks;
+                          const radius = 45;
+                          const circumference = 2 * Math.PI * radius;
+                          const progress = Math.min(tasks / 10, 1); // Max at 10 tasks for visual
+                          const strokeDashoffset = circumference * (1 - progress);
+                          
+                          // Color based on progress to goal
+                          let color = '#EF4444'; // red
+                          if (tasks >= selectedUser.currentGoals.tasksTarget) color = '#10B981'; // green
+                          else if (tasks >= selectedUser.currentGoals.tasksTarget * 0.5) color = '#F59E0B'; // orange
+                          
+                          return (
+                            <div className="relative">
+                              <svg width="110" height="110" className="transform -rotate-90">
+                                <circle cx="55" cy="55" r={radius} stroke="#E5E7EB" strokeWidth="8" fill="none" />
+                                <circle
+                                  cx="55" cy="55" r={radius} stroke={color} strokeWidth="8" fill="none"
+                                  strokeDasharray={circumference} strokeDashoffset={strokeDashoffset}
+                                  strokeLinecap="round" className="transition-all duration-500"
+                                />
+                              </svg>
+                              <div className="absolute inset-0 flex flex-col items-center justify-center">
+                                <span className="text-3xl font-bold" style={{ color }}>{tasks}</span>
+                                <span className="text-xs text-gray-500">tasks</span>
+                              </div>
+                            </div>
+                          );
+                        })()}
+                    </div>
+                    <p className="text-xs text-center text-gray-400 mt-3">
+                      Goal: {selectedUser.currentGoals.tasksTarget} tasks/week
+                    </p>
+                </div>
+
+                {/* Average Minutes per Task */}
+                <div className="bg-white p-6 rounded-xl shadow-sm border border-skvarna-light">
+                    <h4 className="text-sm font-bold text-skvarna-gray uppercase mb-4">Avg. Minutes per Task</h4>
+                    <div className="flex flex-col items-center justify-center">
+                        {(() => {
+                          const avgMinutes = selectedUser.metrics.totalTasks > 0 
+                            ? Math.round((selectedUser.metrics.totalHoursSaved || 0) * 60 / selectedUser.metrics.totalTasks)
+                            : 0;
+                          
+                          let color = '#64748B'; // gray
+                          let emoji = '⏱️';
+                          if (avgMinutes >= 30) { color = '#10B981'; emoji = '🚀'; }
+                          else if (avgMinutes >= 15) { color = '#F59E0B'; emoji = '💪'; }
+                          
+                          return (
+                            <>
+                              <div className="text-5xl mb-2">{emoji}</div>
+                              <span className="text-3xl font-bold" style={{ color }}>{avgMinutes}</span>
+                              <span className="text-sm text-gray-500 mt-1">minutes saved</span>
+                            </>
+                          );
+                        })()}
+                    </div>
+                    <p className="text-xs text-center text-gray-400 mt-3">
+                      per AI activity
+                    </p>
+                </div>
             </div>
 
             {/* Statistics Section */}
