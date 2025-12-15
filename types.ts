@@ -1,43 +1,26 @@
-export interface User {
+export interface UserData {
   id: string;
   name: string;
   role: 'Owner' | 'Staff';
   avatar: string;
+  stats: WeeklyStats[];
+  currentGoals: {
+    tasksTarget: number;
+  };
+  metrics: {
+    totalTasks: number;
+    avgEfficiency: number;
+    aiToolsUsed: string[];
+    engagementScore: number;
+  };
+  completedWritingToneBlueprint: boolean;
 }
 
 export interface WeeklyStats {
   week: string;
   tasksCompleted: number;
-  hoursSaved: number;
-  efficiencyScore: number; // 0-100
+  efficiencyScore: number;
 }
-
-export interface UserData extends User {
-  stats: WeeklyStats[];
-  currentGoals: {
-    tasksTarget: number;
-    hoursTarget: number;
-    deadline: string;
-  };
-  metrics: {
-    totalTasks: number;
-    totalHoursSaved: number;
-    avgEfficiency: number;
-    aiToolsUsed: string[];
-    engagementScore: number; // 1-10
-  };
-  completedToneBlueprint: boolean; // New requirement
-}
-
-export interface ComparisonRow {
-  metric: string;
-  vic: string | number;
-  kelly: string | number;
-  maria: string | number;
-  sandra: string | number;
-}
-
-export type TaskType = 'Drafting' | 'Research' | 'Review' | 'Communication' | 'Analysis' | 'Writing Tone Blueprint' | 'Other';
 
 export interface TaskLog {
   id: string;
@@ -45,8 +28,17 @@ export interface TaskLog {
   userName: string;
   toolName: string;
   taskDescription: string;
-  taskType: TaskType;
+  taskType: string;
   date: string;
-  timeSaved: number; // Minutes
   timestamp: number;
 }
+
+export interface ComparisonRow {
+  metric: string;
+  vic: number | string;
+  kelly: number | string;
+  maria: number | string;
+  sandra: number | string;
+}
+
+export type View = 'dashboard' | 'comparison' | 'individual' | 'leaderboard' | 'entry';
