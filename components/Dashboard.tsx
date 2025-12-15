@@ -42,13 +42,17 @@ export const Dashboard: React.FC<DashboardProps> = ({ users, weeklyGoal, onUpdat
       'Maria': '#215F8B',
       'Sandra': '#64748B',
       'Vic': '#0EA5E9'
+    };
+    return colorMap[name] || '#215F8B';
   };
   
-  const efficiencyPieData = users.map((user, index) => ({
-    name: user.name,
-    value: user.metrics.totalTasks,
-    efficiency: user.metrics.avgEfficiency,
-  })).filter(user => user.value > 0); // Only show users with actual tasks
+  const efficiencyPieData = users
+    .map((user, index) => ({
+      name: user.name,
+      value: user.metrics.totalTasks,
+      efficiency: user.metrics.avgEfficiency,
+    }))
+    .filter(user => user.value > 0); // Only show users with actual tasks
 
   const handleSaveGoal = () => {
     const val = parseInt(tempGoal);
