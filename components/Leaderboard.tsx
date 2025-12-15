@@ -49,7 +49,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ users }) => {
               <span>Full Team Standings</span>
               <span>Metric: Hours Saved</span>
           </div>
-          {users.sort((a,b) => b.metrics.totalHoursSaved - a.metrics.totalHoursSaved).map((user, idx) => (
+          {users.sort((a,b) => (b.metrics.totalHoursSaved || 0) - (a.metrics.totalHoursSaved || 0)).map((user, idx) => (
               <div key={user.id} className="flex items-center justify-between p-4 border-b border-skvarna-light last:border-0 hover:bg-gray-50">
                   <div className="flex items-center space-x-4">
                       <span className="text-skvarna-gray font-mono font-bold w-6 text-center">{idx + 1}</span>
@@ -58,7 +58,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ users }) => {
                   </div>
                   <div className="flex items-center space-x-2">
                       <Clock size={16} className="text-skvarna-blue" />
-                      <span className="font-bold text-skvarna-navy">{user.metrics.totalHoursSaved} hrs</span>
+                      <span className="font-bold text-skvarna-navy">{user.metrics.totalHoursSaved || 0} hrs</span>
                   </div>
               </div>
           ))}

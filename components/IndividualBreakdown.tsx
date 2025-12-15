@@ -85,13 +85,13 @@ export const IndividualBreakdown: React.FC<IndividualBreakdownProps> = ({ users,
                              <BookOpen size={16} className="text-skvarna-navy" />
                              <span className="text-sm font-bold text-skvarna-navy">Writing Tone Blueprint</span>
                         </div>
-                        {selectedUser.completedToneBlueprint 
+                        {selectedUser.completedToneBlueprint || selectedUser.completedWritingToneBlueprint
                             ? <CheckSquare className="text-green-500" size={20} />
                             : <Square className="text-gray-300" size={20} />
                         }
                     </div>
                     <p className="text-xs text-left mt-1 text-gray-500">
-                        {selectedUser.completedToneBlueprint ? "Completed" : "Due: Dec 31"}
+                        {selectedUser.completedToneBlueprint || selectedUser.completedWritingToneBlueprint ? "Completed" : "Due: Dec 31"}
                     </p>
                 </div>
 
@@ -152,17 +152,17 @@ export const IndividualBreakdown: React.FC<IndividualBreakdownProps> = ({ users,
                         <label className="block text-xs font-bold text-skvarna-gray uppercase mb-1">Target Hours Saved</label>
                         <input 
                             type="number" 
-                            value={selectedUser.currentGoals.hoursTarget}
+                            value={selectedUser.currentGoals.hoursTarget || 0}
                             onChange={(e) => handleGoalChange('hoursTarget', e.target.value)}
                             className="w-full border border-gray-300 rounded p-2 text-skvarna-navy focus:border-skvarna-blue outline-none"
                         />
                         <div className="w-full bg-gray-200 rounded-full h-1.5 mt-2">
                             <div 
                                 className="bg-skvarna-yellow h-1.5 rounded-full" 
-                                style={{ width: `${Math.min((selectedUser.metrics.totalHoursSaved / selectedUser.currentGoals.hoursTarget) * 100, 100)}%` }}
+                                style={{ width: `${Math.min(((selectedUser.metrics.totalHoursSaved || 0) / (selectedUser.currentGoals.hoursTarget || 1)) * 100, 100)}%` }}
                             ></div>
                         </div>
-                         <p className="text-xs text-gray-400 mt-1">Progress: {Math.round((selectedUser.metrics.totalHoursSaved / selectedUser.currentGoals.hoursTarget) * 100)}%</p>
+                         <p className="text-xs text-gray-400 mt-1">Progress: {Math.round(((selectedUser.metrics.totalHoursSaved || 0) / (selectedUser.currentGoals.hoursTarget || 1)) * 100)}%</p>
                     </div>
 
                     <div>
@@ -170,7 +170,7 @@ export const IndividualBreakdown: React.FC<IndividualBreakdownProps> = ({ users,
                         <div className="flex items-center space-x-2">
                             <input 
                                 type="date" 
-                                value={selectedUser.currentGoals.deadline}
+                                value={selectedUser.currentGoals.deadline || ''}
                                 onChange={(e) => handleDeadlineChange(e.target.value)}
                                 className="w-full border border-gray-300 rounded p-2 text-skvarna-navy focus:border-skvarna-blue outline-none"
                             />

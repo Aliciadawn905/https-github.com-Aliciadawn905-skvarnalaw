@@ -13,28 +13,37 @@ export const Dashboard: React.FC<DashboardProps> = ({ users, weeklyGoal, onUpdat
   const [isEditingGoal, setIsEditingGoal] = useState(false);
   const [tempGoal, setTempGoal] = useState(weeklyGoal.toString());
 
+  // Return early if no users data is available
+  if (!users || users.length === 0) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-skvarna-gray">Loading user data...</p>
+      </div>
+    );
+  }
+
   // Aggregate data for the team
   const totalTasks = users.reduce((acc, user) => acc + user.metrics.totalTasks, 0);
-  const totalHours = users.reduce((acc, user) => acc + user.metrics.totalHoursSaved, 0);
-  const avgEfficiency = Math.round(users.reduce((acc, user) => acc + user.metrics.avgEfficiency, 0) / users.length);
-  const blueprintCompletionCount = users.filter(u => u.completedToneBlueprint).length;
+  const totalHours = users.reduce((acc, user) => acc + (user.metrics.totalHoursSaved || 0), 0);
+  const avgEfficiency = users.length > 0 ? Math.round(users.reduce((acc, user) => acc + user.metrics.avgEfficiency, 0) / users.length) : 0;
+  const blueprintCompletionCount = users.filter(u => u.completedWritingToneBlueprint || u.completedToneBlueprint).length;
   
-  // Transform data for charts
-  const teamProgressData = [0, 1, 2, 3].map(index => {
-    return {
-      name: users[0].stats[index].week,
-      Vic: users[0].stats[index].tasksCompleted,
-      Kelly: users[1].stats[index].tasksCompleted,
-      Maria: users[2].stats[index].tasksCompleted,
-      Sandra: users[3].stats[index].tasksCompleted,
+  // Transform data for charts - ensure we have at least 4 users with stats
+  const teamProgressData = users[0]?.stats ? [0, 1, 2, 3].map(index => {
+    const weekData: any = {
+      name: users[0].stats[index]?.week || `Week ${index + 1}`,
     };
-  });
+    users.forEach(user => {
+      weekData[user.name] = user.stats[index]?.tasksCompleted || 0;
+    });
+    return weekData;
+  }) : [];
 
-  const aggregateEfficiencyData = [0, 1, 2, 3].map(index => {
-      const weekName = users[0].stats[index].week;
-      const teamAvg = Math.round(users.reduce((acc, u) => acc + u.stats[index].efficiencyScore, 0) / users.length);
+  const aggregateEfficiencyData = users[0]?.stats ? [0, 1, 2, 3].map(index => {
+      const weekName = users[0].stats[index]?.week || `Week ${index + 1}`;
+      const teamAvg = users.length > 0 ? Math.round(users.reduce((acc, u) => acc + (u.stats[index]?.efficiencyScore || 0), 0) / users.length) : 0;
       return { name: weekName, TeamEfficiency: teamAvg };
-  });
+  }) : [];
 
   const handleSaveGoal = () => {
     const val = parseInt(tempGoal);

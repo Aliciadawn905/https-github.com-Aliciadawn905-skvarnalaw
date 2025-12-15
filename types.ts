@@ -6,14 +6,18 @@ export interface UserData {
   stats: WeeklyStats[];
   currentGoals: {
     tasksTarget: number;
+    hoursTarget?: number;
+    deadline?: string;
   };
   metrics: {
     totalTasks: number;
+    totalHoursSaved?: number;
     avgEfficiency: number;
     aiToolsUsed: string[];
     engagementScore: number;
   };
-  completedWritingToneBlueprint: boolean;
+  completedWritingToneBlueprint?: boolean;
+  completedToneBlueprint?: boolean;
 }
 
 export interface WeeklyStats {
