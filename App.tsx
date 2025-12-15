@@ -104,7 +104,7 @@ const App: React.FC = () => {
 
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { id: 'entry', label: 'Data Entry', icon: ClipboardPlus },
+    { id: 'entry', label: 'AI Tracking Log', icon: ClipboardPlus },
     { id: 'ideas', label: 'Automation Ideas', icon: Lightbulb },
     { id: 'individual', label: 'Individual Progress', icon: Users },
     { id: 'leaderboard', label: 'Leaderboard', icon: Trophy },

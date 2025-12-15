@@ -111,7 +111,7 @@ export const DataEntry: React.FC<DataEntryProps> = ({ users, logs, onAddLog }) =
 
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold text-skvarna-blue">Data Entry Log</h2>
+          <h2 className="text-2xl font-bold text-skvarna-blue">AI Tracking Log</h2>
           <p className="text-skvarna-gray">Record AI tool usage and task details</p>
         </div>
       </div>
