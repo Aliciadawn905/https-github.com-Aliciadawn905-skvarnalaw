@@ -25,7 +25,7 @@ export const DataEntry: React.FC<DataEntryProps> = ({ users, logs, onAddLog }) =
   const toolOptions = AI_TOOLS as unknown as string[];
   const typeOptions = TASK_TYPES as unknown as TaskType[];
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!description.trim() || !selectedUserId || !toolName) {
       alert('Please fill in all required fields (User, Tool, and Description)');
@@ -34,8 +34,7 @@ export const DataEntry: React.FC<DataEntryProps> = ({ users, logs, onAddLog }) =
 
     setIsSubmitting(true);
 
-    // Simulate network delay for realism
-    setTimeout(() => {
+    try {
       const user = users.find(u => u.id === selectedUserId);
       const newLog: TaskLog = {
         id: Math.random().toString(36).substr(2, 9),
@@ -49,11 +48,18 @@ export const DataEntry: React.FC<DataEntryProps> = ({ users, logs, onAddLog }) =
         timestamp: Date.now(),
       };
 
-      onAddLog(newLog);
+      await onAddLog(newLog);
+      
+      // Only reset form if submission was successful
       setDescription('');
       setTimeSaved('');
+      setSelectedUserId('');
+      setToolName('');
+    } catch (err) {
+      console.error('Form submission error:', err);
+    } finally {
       setIsSubmitting(false);
-    }, 600);
+    }
   };
 
   // Filter Logic

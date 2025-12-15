@@ -1,6 +1,18 @@
 # Supabase Database Cleanup Instructions
 
-## 1. Clear Test Data
+## 1. Update Avatars to Neutral Icons
+
+Run this SQL command in your Supabase SQL Editor to update avatars to neutral, initial-based icons:
+
+```sql
+-- Update avatars to neutral UI Avatars with initials and custom colors
+UPDATE users SET avatar = 'https://ui-avatars.com/api/?name=Vic&background=1E3A8A&color=fff&size=200&bold=true' WHERE name = 'Vic';
+UPDATE users SET avatar = 'https://ui-avatars.com/api/?name=Kelly&background=F7C355&color=1E3A8A&size=200&bold=true' WHERE name = 'Kelly';
+UPDATE users SET avatar = 'https://ui-avatars.com/api/?name=Maria&background=64748B&color=fff&size=200&bold=true' WHERE name = 'Maria';
+UPDATE users SET avatar = 'https://ui-avatars.com/api/?name=Sandra&background=0EA5E9&color=fff&size=200&bold=true' WHERE name = 'Sandra';
+```
+
+## 2. Clear Test Data
 
 Run these SQL commands in your Supabase SQL Editor:
 

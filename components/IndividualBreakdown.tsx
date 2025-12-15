@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { UserData } from '../types';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, LineChart, Line, XAxis, YAxis, CartesianGrid } from 'recharts';
-import { Send, Calendar, Target, Award, BookOpen, CheckSquare, Square } from 'lucide-react';
+import { Send, Calendar, Target, Award, BookOpen, CheckSquare, Square, ChevronRight } from 'lucide-react';
 
 interface IndividualBreakdownProps {
   users: UserData[];
@@ -10,16 +10,76 @@ interface IndividualBreakdownProps {
 }
 
 export const IndividualBreakdown: React.FC<IndividualBreakdownProps> = ({ users, updateUserGoal, toggleBlueprint }) => {
-  const [selectedUserId, setSelectedUserId] = useState<string>(users[0].id);
-  const selectedUser = users.find(u => u.id === selectedUserId) || users[0];
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const selectedUser = selectedUserId ? users.find(u => u.id === selectedUserId) : null;
 
   const handleGoalChange = (type: 'tasksTarget' | 'hoursTarget', val: string) => {
+    if (!selectedUser) return;
     updateUserGoal(selectedUser.id, type, parseInt(val));
   };
   
   const handleDeadlineChange = (val: string) => {
+    if (!selectedUser) return;
     updateUserGoal(selectedUser.id, 'deadline', val);
   };
+
+  // If no user selected, show grid of all users
+  if (!selectedUser) {
+    return (
+      <div className="space-y-6 animate-fade-in">
+        <div>
+          <h2 className="text-2xl font-bold text-skvarna-blue">Individual Progress</h2>
+          <p className="text-skvarna-gray">Select a team member to view their detailed progress</p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {users.map(user => (
+            <div 
+              key={user.id}
+              onClick={() => setSelectedUserId(user.id)}
+              className="bg-white p-6 rounded-xl shadow-sm border border-skvarna-light hover:shadow-lg hover:border-skvarna-blue transition-all cursor-pointer group"
+            >
+              <div className="flex flex-col items-center text-center">
+                <div className="relative mb-4">
+                  <img 
+                    src={user.avatar} 
+                    alt={user.name} 
+                    className="w-20 h-20 rounded-full border-4 border-skvarna-light group-hover:border-skvarna-yellow transition-colors object-cover"
+                  />
+                  <span className="absolute bottom-0 right-0 bg-skvarna-blue text-white text-xs px-2 py-1 rounded-full border-2 border-white">
+                    {user.metrics.engagementScore}/10
+                  </span>
+                </div>
+                
+                <h3 className="text-lg font-bold text-skvarna-navy mb-1">{user.name}</h3>
+                <p className="text-xs text-skvarna-gray mb-4">{user.role}</p>
+
+                <div className="w-full space-y-2 mb-4">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-skvarna-gray">Total Tasks</span>
+                    <span className="font-bold text-skvarna-blue">{user.metrics.totalTasks}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-skvarna-gray">Efficiency</span>
+                    <span className="font-bold text-green-600">{user.metrics.avgEfficiency}%</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-skvarna-gray">Hours Saved</span>
+                    <span className="font-bold text-skvarna-yellow">{user.metrics.totalHoursSaved || 0} hrs</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center text-skvarna-blue text-sm font-semibold group-hover:text-skvarna-navy">
+                  View Details
+                  <ChevronRight size={16} className="ml-1 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   // Engagement Data for Pie Chart
   const engagementData = [
@@ -32,20 +92,14 @@ export const IndividualBreakdown: React.FC<IndividualBreakdownProps> = ({ users,
     <div className="space-y-6 animate-fade-in">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-            <h2 className="text-2xl font-bold text-skvarna-blue">Individual Breakdown</h2>
-            <p className="text-skvarna-gray">Deep dive into personal progress and goals</p>
-        </div>
-        
-        {/* User Selector */}
-        <div className="flex items-center space-x-2 bg-white p-2 rounded-lg border border-skvarna-light">
-          <span className="text-sm text-skvarna-gray font-medium px-2">Select Team Member:</span>
-          <select 
-            value={selectedUserId}
-            onChange={(e) => setSelectedUserId(e.target.value)}
-            className="form-select block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-skvarna-blue focus:border-skvarna-blue sm:text-sm rounded-md"
+          <button 
+            onClick={() => setSelectedUserId(null)}
+            className="text-skvarna-blue hover:text-skvarna-navy mb-2 flex items-center text-sm font-medium"
           >
-            {users.map(u => <option key={u.id} value={u.id}>{u.name}</option>)}
-          </select>
+            ← Back to All Team Members
+          </button>
+          <h2 className="text-2xl font-bold text-skvarna-blue">Individual Breakdown</h2>
+          <p className="text-skvarna-gray">Deep dive into personal progress and goals</p>
         </div>
       </div>
 
