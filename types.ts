@@ -35,6 +35,7 @@ export interface TaskLog {
   taskType: string;
   date: string;
   timestamp: number;
+  timeSaved?: number; // Time saved in minutes
 }
 
 export interface ComparisonRow {
@@ -46,3 +47,5 @@ export interface ComparisonRow {
 }
 
 export type View = 'dashboard' | 'comparison' | 'individual' | 'leaderboard' | 'entry';
+
+export type TaskType = 'Research' | 'Drafting' | 'Review' | 'Communication' | 'Analysis' | 'Writing Tone Blueprint' | 'Other';

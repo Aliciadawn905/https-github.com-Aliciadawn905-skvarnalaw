@@ -126,12 +126,12 @@ export const Dashboard: React.FC<DashboardProps> = ({ users, weeklyGoal, onUpdat
 
       {/* Top Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard icon={CheckCircle} label="Total Tasks Automated" value={totalTasks} color="bg-skvarna-blue" />
+        <StatCard icon={CheckCircle} label="Total AI Uses Logged" value={totalTasks} color="bg-skvarna-blue" />
         <StatCard icon={Clock} label="Total Hours Saved" value={totalHours} color="bg-skvarna-yellow" subtitle="Across all tools" />
         <StatCard icon={Zap} label="Avg. Team Efficiency" value={`${avgEfficiency}%`} color="bg-purple-600" />
         <StatCard 
             icon={BookOpen} 
-            label="Tone Blueprints" 
+            label="Writing Tone Blueprints" 
             value={`${blueprintCompletionCount}/${users.length}`} 
             color="bg-skvarna-navy" 
             subtitle="Completed by Dec 31"

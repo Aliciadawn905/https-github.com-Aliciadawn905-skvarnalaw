@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { UserData, TaskLog, TaskType } from '../types';
+import { AI_TOOLS, TASK_TYPES } from '../constants';
 import { PlusCircle, History, User as UserIcon, Briefcase, PenTool, FileText, Filter, Clock } from 'lucide-react';
 
 interface DataEntryProps {
@@ -21,18 +22,8 @@ export const DataEntry: React.FC<DataEntryProps> = ({ users, logs, onAddLog }) =
   const [filterUser, setFilterUser] = useState<string>('All');
   const [filterTool, setFilterTool] = useState<string>('All');
 
-  const toolOptions = [
-    'Gemini',
-    'Claude.ai',
-    'NotebookLM',
-    'CoCounsel',
-    'Legal Research AI',
-    'Drafting Copilot',
-    'ChatGPT Plus',
-    'Other'
-  ];
-
-  const typeOptions: TaskType[] = ['Drafting', 'Research', 'Review', 'Communication', 'Analysis', 'Writing Tone Blueprint', 'Other'];
+  const toolOptions = AI_TOOLS as unknown as string[];
+  const typeOptions = TASK_TYPES as unknown as TaskType[];
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

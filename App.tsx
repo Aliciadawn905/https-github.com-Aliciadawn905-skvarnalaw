@@ -57,7 +57,11 @@ const App: React.FC = () => {
 
   const toggleBlueprint = async (userId: string) => {
     try {
-      await dbToggleBlueprint(userId);
+      // Get current user to toggle their blueprint status
+      const currentUser = users.find(u => u.id === userId);
+      const newStatus = !(currentUser?.completedWritingToneBlueprint || currentUser?.completedToneBlueprint || false);
+      
+      await dbToggleBlueprint(userId, newStatus);
       // Refresh users data
       const usersData = await fetchUsers();
       setUsers(usersData);
@@ -69,7 +73,19 @@ const App: React.FC = () => {
 
   const handleAddLog = async (newLog: TaskLog) => {
     try {
-      await addTaskLog(newLog);
+      // Convert to database format (snake_case)
+      const dbLog = {
+        user_id: newLog.userId,
+        user_name: newLog.userName,
+        tool_name: newLog.toolName,
+        task_description: newLog.taskDescription,
+        task_type: newLog.taskType,
+        date: newLog.date,
+        timestamp: newLog.timestamp,
+        time_saved: newLog.timeSaved || 0,
+      };
+      
+      await addTaskLog(dbLog);
       // Refresh both users and logs
       const [usersData, logsData] = await Promise.all([
         fetchUsers(),

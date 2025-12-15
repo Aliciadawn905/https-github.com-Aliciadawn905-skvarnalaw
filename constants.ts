@@ -1,9 +1,24 @@
+// AI Tools available for tracking
 export const AI_TOOLS = [
-  'AI Questions Asked',
-  'Documents Reviewed with AI',
-  'AI Drafts Created',
+  'Gemini',
+  'Claude.ai',
+  'NotebookLM',
+  'CoCounsel',
+  'ChatGPT Plus',
+  'Legal Research AI',
+  'Drafting Copilot',
+  'Other'
+] as const;
+
+// Task type categories for AI usage
+export const TASK_TYPES = [
+  'Research',
+  'Drafting', 
+  'Review',
+  'Communication',
+  'Analysis',
   'Writing Tone Blueprint',
-  'Automation Idea Submitted'
+  'Other'
 ] as const;
 
 import { UserData, ComparisonRow, TaskLog } from './types';

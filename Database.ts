@@ -46,6 +46,7 @@ function transformTaskLogData(dbLog: any): TaskLog {
     taskType: dbLog.task_type || dbLog.taskType || '',
     date: dbLog.date || '',
     timestamp: dbLog.timestamp || 0,
+    timeSaved: dbLog.time_saved || dbLog.timeSaved || 0,
   };
 }
 
@@ -77,6 +78,7 @@ export async function addTaskLog(taskLog: {
   task_type: string;
   date: string;
   timestamp: number;
+  time_saved?: number;
 }) {
   const { data, error } = await supabase
     .from('task_logs')
