@@ -338,6 +338,48 @@ export const DataEntry: React.FC<DataEntryProps> = ({ users, logs, onAddLog, onD
           </div>
         </div>
       </div>
+
+      {/* AI Usage Examples Section */}
+      <div className="bg-gradient-to-br from-purple-50 to-blue-50 border-2 border-purple-200 rounded-xl p-6 mt-6">
+        <h3 className="text-lg font-bold text-purple-900 mb-3 flex items-center gap-2">
+          <PlusCircle size={20} className="text-purple-600" />
+          10 Example Ways to Use AI in Your Law Practice
+        </h3>
+        <p className="text-sm text-purple-800 mb-4">Get inspired! Here are practical examples of AI tools solving everyday legal challenges:</p>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          {[
+            { tool: "ChatGPT", task: "Draft initial client intake questionnaire for estate planning", time: "20 min" },
+            { tool: "Claude.ai", task: "Summarize 50-page medical records for Medicaid planning case", time: "45 min" },
+            { tool: "Gemini", task: "Research recent changes to power of attorney laws in your state", time: "30 min" },
+            { tool: "ChatGPT Plus", task: "Create template response letter for probate court filing", time: "15 min" },
+            { tool: "Claude.ai", task: "Analyze trust document and highlight potential issues", time: "25 min" },
+            { tool: "NotebookLM", task: "Generate FAQ sheet for clients about guardianship process", time: "20 min" },
+            { tool: "ChatGPT", task: "Write follow-up email to client explaining next steps in will creation", time: "10 min" },
+            { tool: "Gemini", task: "Compare different trust structures for high-net-worth client", time: "35 min" },
+            { tool: "Claude.ai", task: "Draft motion to extend deadline with case-specific details", time: "18 min" },
+            { tool: "ChatGPT Plus", task: "Create checklist for gathering documents needed for estate administration", time: "12 min" }
+          ].map((example, index) => (
+            <div key={index} className="bg-white border border-purple-100 rounded-lg p-3 hover:shadow-md transition-shadow">
+              <div className="flex items-start gap-2">
+                <span className="bg-purple-100 text-purple-700 font-bold text-xs px-2 py-1 rounded">{index + 1}</span>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Briefcase size={14} className="text-purple-600" />
+                    <span className="text-xs font-semibold text-purple-700">{example.tool}</span>
+                    <span className="text-xs text-gray-500">• {example.time} saved</span>
+                  </div>
+                  <p className="text-sm text-gray-700">{example.task}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+        
+        <p className="text-xs text-purple-700 mt-4 italic text-center">
+          💡 Tip: Start by trying one of these examples in your daily work, then log it above!
+        </p>
+      </div>
     </div>
   );
 };

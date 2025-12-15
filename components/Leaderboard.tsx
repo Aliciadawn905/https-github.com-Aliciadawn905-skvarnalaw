@@ -9,6 +9,9 @@ interface LeaderboardProps {
 export const Leaderboard: React.FC<LeaderboardProps> = ({ users }) => {
   // Sort users by efficiency for the main ranking
   const sortedUsers = [...users].sort((a, b) => b.metrics.avgEfficiency - a.metrics.avgEfficiency);
+  
+  // Check if anyone has logged activities
+  const hasActivity = users.some(u => u.metrics.totalTasks > 0);
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -22,6 +25,14 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ users }) => {
           </div>
       </div>
 
+      {!hasActivity ? (
+        <div className="bg-white rounded-xl border border-skvarna-light p-12 text-center">
+          <Trophy size={64} className="mx-auto text-gray-300 mb-4" />
+          <h3 className="text-xl font-bold text-skvarna-navy mb-2">No Activity Yet</h3>
+          <p className="text-skvarna-gray">Start logging AI activities to see the leaderboard rankings!</p>
+        </div>
+      ) : (
+        <>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 mt-8">
         {/* First Place */}
         <div className="order-1 md:order-2 bg-gradient-to-b from-yellow-50 to-white border-2 border-skvarna-yellow rounded-xl p-6 flex flex-col items-center shadow-md transform md:-translate-y-4">
@@ -68,6 +79,8 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ users }) => {
               </div>
           ))}
       </div>
+      </>
+      )}
     </div>
   );
 };
