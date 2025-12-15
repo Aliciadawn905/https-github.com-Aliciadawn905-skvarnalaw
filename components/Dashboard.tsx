@@ -173,26 +173,32 @@ export const Dashboard: React.FC<DashboardProps> = ({ users, weeklyGoal, onUpdat
         <div className="bg-white p-6 rounded-xl shadow-sm border border-skvarna-light">
           <h3 className="text-lg font-bold text-skvarna-navy mb-4">Task Distribution by Team Member</h3>
           <div className="h-80 w-full flex items-center justify-center">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={efficiencyPieData}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={({name, value}) => `${name}: ${value}`}
-                  outerRadius={100}
-                  fill="#8884d8"
-                  dataKey="value"
-                >
-                  {efficiencyPieData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip />
-                <Legend />
-              </PieChart>
-            </ResponsiveContainer>
+            {efficiencyPieData.length > 0 ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={efficiencyPieData}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={({name, value}) => `${name}: ${value}`}
+                    outerRadius={100}
+                    fill="#8884d8"
+                    dataKey="value"
+                  >
+                    {efficiencyPieData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="text-center text-gray-400">
+                <p className="text-sm">No tasks logged yet</p>
+              </div>
+            )}
           </div>
         </div>
 
