@@ -28,14 +28,24 @@ export const Dashboard: React.FC<DashboardProps> = ({ users, weeklyGoal, onUpdat
   const avgEfficiency = users.length > 0 ? Math.round(users.reduce((acc, user) => acc + user.metrics.avgEfficiency, 0) / users.length) : 0;
   const blueprintCompletionCount = users.filter(u => u.completedWritingToneBlueprint || u.completedToneBlueprint).length;
   
-  // Create simple chart data from current task counts
+  // Create chart data with hours saved per person
   const teamProgressData = users.map(user => ({
     name: user.name,
-    tasks: user.metrics.totalTasks,
+    hours: user.metrics.totalHoursSaved || 0,
   }));
 
-  // Pie chart data for efficiency distribution
-  const COLORS = ['#215F8B', '#F7C355', '#64748B', '#0EA5E9'];
+  // Pie chart data and colors - matching color scheme across both charts
+  const COLORS = ['#215F8B', '#F7C355', '#64748B', '#0EA5E9']; // Kelly, Maria, Sandra, Vic
+  const getColorForUser = (name: string) => {
+    const colorMap: { [key: string]: string } = {
+      'Kelly': '#215F8B',
+      'Maria': '#F7C355',
+      'Sandra': '#64748B',
+      'Vic': '#0EA5E9'
+    };
+    return colorMap[name] || '#215F8B';
+  };
+  
   const efficiencyPieData = users.map((user, index) => ({
     name: user.name,
     value: user.metrics.totalTasks || 1, // Show at least 1 to display the segment
@@ -138,9 +148,9 @@ export const Dashboard: React.FC<DashboardProps> = ({ users, weeklyGoal, onUpdat
       {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
-        {/* Team Task Output */}
+        {/* Hours Saved by Staff */}
         <div className="bg-white p-6 rounded-xl shadow-sm border border-skvarna-light">
-          <h3 className="text-lg font-bold text-skvarna-navy mb-4">Task Completion by Staff</h3>
+          <h3 className="text-lg font-bold text-skvarna-navy mb-4">Hours Saved by Team Member</h3>
           <div className="h-80 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={teamProgressData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
@@ -149,8 +159,13 @@ export const Dashboard: React.FC<DashboardProps> = ({ users, weeklyGoal, onUpdat
                 <YAxis axisLine={false} tickLine={false} tick={{fill: '#5E6163'}} />
                 <Tooltip 
                     contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}
+                    formatter={(value) => [`${value} hrs`, 'Hours Saved']}
                 />
-                <Bar dataKey="tasks" fill="#215F8B" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="hours" radius={[4, 4, 0, 0]}>
+                  {teamProgressData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={getColorForUser(entry.name)} />
+                  ))}
+                </Bar>
               </BarChart>
             </ResponsiveContainer>
           </div>
