@@ -55,8 +55,12 @@ export const DataEntry: React.FC<DataEntryProps> = ({ users, logs, onAddLog }) =
       setTimeSaved('');
       setSelectedUserId('');
       setToolName('');
+      
+      // Show success message
+      alert('Log added successfully!');
     } catch (err) {
       console.error('Form submission error:', err);
+      alert('Failed to add log. Please try again.');
     } finally {
       setIsSubmitting(false);
     }

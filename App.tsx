@@ -5,10 +5,11 @@ import { ComparisonMatrix } from './components/ComparisonMatrix';
 import { IndividualBreakdown } from './components/IndividualBreakdown';
 import { Leaderboard } from './components/Leaderboard';
 import { DataEntry } from './components/DataEntry';
-import { LayoutDashboard, Users, Trophy, Table2, Menu, Bell, ClipboardPlus } from 'lucide-react';
+import { TaskIdeas } from './components/TaskIdeas';
+import { LayoutDashboard, Users, Trophy, Table2, Menu, Bell, ClipboardPlus, Lightbulb } from 'lucide-react';
 import { fetchUsers, fetchTaskLogs, addTaskLog, updateUserGoal as dbUpdateUserGoal, toggleBlueprint as dbToggleBlueprint } from './Database';
 
-type View = 'dashboard' | 'comparison' | 'individual' | 'leaderboard' | 'entry';
+type View = 'dashboard' | 'comparison' | 'individual' | 'leaderboard' | 'entry' | 'ideas';
 
 const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<View>('dashboard');
@@ -93,15 +94,17 @@ const App: React.FC = () => {
       ]);
       setUsers(usersData);
       setTaskLogs(logsData);
+      return true; // Indicate success
     } catch (err) {
       console.error('Error adding log:', err);
-      alert('Failed to add log. Please try again.');
+      throw err; // Re-throw so DataEntry can handle it
     }
   };
 
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'entry', label: 'Data Entry', icon: ClipboardPlus },
+    { id: 'ideas', label: 'Task Ideas', icon: Lightbulb },
     { id: 'individual', label: 'Individual Progress', icon: Users },
     { id: 'leaderboard', label: 'Leaderboard', icon: Trophy },
     { id: 'comparison', label: 'Comparison Matrix', icon: Table2 },
@@ -222,6 +225,7 @@ const App: React.FC = () => {
             {currentView === 'individual' && <IndividualBreakdown users={users} updateUserGoal={updateUserGoal} toggleBlueprint={toggleBlueprint} />}
             {currentView === 'leaderboard' && <Leaderboard users={users} />}
             {currentView === 'entry' && <DataEntry users={users} logs={taskLogs} onAddLog={handleAddLog} />}
+            {currentView === 'ideas' && <TaskIdeas users={users} />}
           </div>
         </div>
       </main>
