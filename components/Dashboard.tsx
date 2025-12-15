@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { UserData } from '../types';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Legend } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Legend, PieChart, Pie, Cell } from 'recharts';
 import { Users, Clock, CheckCircle, Zap, Target, BookOpen, Edit2, Check } from 'lucide-react';
 
 interface DashboardProps {
@@ -28,22 +28,19 @@ export const Dashboard: React.FC<DashboardProps> = ({ users, weeklyGoal, onUpdat
   const avgEfficiency = users.length > 0 ? Math.round(users.reduce((acc, user) => acc + user.metrics.avgEfficiency, 0) / users.length) : 0;
   const blueprintCompletionCount = users.filter(u => u.completedWritingToneBlueprint || u.completedToneBlueprint).length;
   
-  // Transform data for charts - ensure we have at least 4 users with stats
-  const teamProgressData = users[0]?.stats ? [0, 1, 2, 3].map(index => {
-    const weekData: any = {
-      name: users[0].stats[index]?.week || `Week ${index + 1}`,
-    };
-    users.forEach(user => {
-      weekData[user.name] = user.stats[index]?.tasksCompleted || 0;
-    });
-    return weekData;
-  }) : [];
+  // Create simple chart data from current task counts
+  const teamProgressData = users.map(user => ({
+    name: user.name,
+    tasks: user.metrics.totalTasks,
+  }));
 
-  const aggregateEfficiencyData = users[0]?.stats ? [0, 1, 2, 3].map(index => {
-      const weekName = users[0].stats[index]?.week || `Week ${index + 1}`;
-      const teamAvg = users.length > 0 ? Math.round(users.reduce((acc, u) => acc + (u.stats[index]?.efficiencyScore || 0), 0) / users.length) : 0;
-      return { name: weekName, TeamEfficiency: teamAvg };
-  }) : [];
+  // Pie chart data for efficiency distribution
+  const COLORS = ['#215F8B', '#F7C355', '#64748B', '#0EA5E9'];
+  const efficiencyPieData = users.map((user, index) => ({
+    name: user.name,
+    value: user.metrics.totalTasks || 1, // Show at least 1 to display the segment
+    efficiency: user.metrics.avgEfficiency,
+  }));
 
   const handleSaveGoal = () => {
     const val = parseInt(tempGoal);
@@ -153,34 +150,35 @@ export const Dashboard: React.FC<DashboardProps> = ({ users, weeklyGoal, onUpdat
                 <Tooltip 
                     contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}
                 />
-                <Legend />
-                <Bar dataKey="Vic" fill="#215F8B" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="Kelly" fill="#F7C355" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="Maria" fill="#AEC4D9" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="Sandra" fill="#004F7F" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="tasks" fill="#215F8B" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        {/* Efficiency Trend */}
+        {/* Efficiency Distribution - Circular */}
         <div className="bg-white p-6 rounded-xl shadow-sm border border-skvarna-light">
-          <h3 className="text-lg font-bold text-skvarna-navy mb-4">Overall Efficiency Trend</h3>
-          <div className="h-80 w-full">
+          <h3 className="text-lg font-bold text-skvarna-navy mb-4">Task Distribution by Team Member</h3>
+          <div className="h-80 w-full flex items-center justify-center">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={aggregateEfficiencyData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="colorEff" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#215F8B" stopOpacity={0.8}/>
-                    <stop offset="95%" stopColor="#215F8B" stopOpacity={0}/>
-                  </linearGradient>
-                </defs>
-                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#5E6163'}} />
-                <YAxis axisLine={false} tickLine={false} tick={{fill: '#5E6163'}} domain={[0, 100]} />
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#EBEFF2" />
-                <Tooltip contentStyle={{ borderRadius: '8px', border: 'none' }} />
-                <Area type="monotone" dataKey="TeamEfficiency" stroke="#215F8B" fillOpacity={1} fill="url(#colorEff)" />
-              </AreaChart>
+              <PieChart>
+                <Pie
+                  data={efficiencyPieData}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  label={({name, value}) => `${name}: ${value}`}
+                  outerRadius={100}
+                  fill="#8884d8"
+                  dataKey="value"
+                >
+                  {efficiencyPieData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip />
+                <Legend />
+              </PieChart>
             </ResponsiveContainer>
           </div>
         </div>

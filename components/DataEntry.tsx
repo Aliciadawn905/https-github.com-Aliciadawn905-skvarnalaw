@@ -1,18 +1,21 @@
 import React, { useState } from 'react';
 import { UserData, TaskLog, TaskType } from '../types';
 import { AI_TOOLS, TASK_TYPES } from '../constants';
-import { PlusCircle, History, User as UserIcon, Briefcase, PenTool, FileText, Filter, Clock, CheckCircle } from 'lucide-react';
+import { PlusCircle, History, User as UserIcon, Briefcase, PenTool, FileText, Filter, Clock, CheckCircle, Edit, Trash2 } from 'lucide-react';
 
 interface DataEntryProps {
   users: UserData[];
   logs: TaskLog[];
   onAddLog: (log: TaskLog) => void;
+  onDeleteLog?: (logId: string) => void;
+  onUpdateLog?: (log: TaskLog) => void;
 }
 
-export const DataEntry: React.FC<DataEntryProps> = ({ users, logs, onAddLog }) => {
+export const DataEntry: React.FC<DataEntryProps> = ({ users, logs, onAddLog, onDeleteLog, onUpdateLog }) => {
   // Form State
   const [selectedUserId, setSelectedUserId] = useState<string>('');
   const [toolName, setToolName] = useState<string>('');
+  const [editingLog, setEditingLog] = useState<TaskLog | null>(null);
   const [taskType, setTaskType] = useState<TaskType>('Client Email/Letter');
   const [description, setDescription] = useState<string>('');
   const [timeSaved, setTimeSaved] = useState<string>('');
